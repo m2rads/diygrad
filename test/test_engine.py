@@ -7,8 +7,8 @@ def test_sanity_check():
 
     x = Value(-4.0)
     z = 2 * x + 2 + x
-    q = z.relu() + z * x
-    h = (z * z).relu()
+    q = z.tanh() + z * x
+    h = (z * z).tanh()
     y = h + q + q * x
     y.backward()
     xmg, ymg = x, y
@@ -16,8 +16,8 @@ def test_sanity_check():
     x = torch.Tensor([-4.0]).double()
     x.requires_grad = True
     z = 2 * x + 2 + x
-    q = z.relu() + z * x
-    h = (z * z).relu()
+    q = z.tanh() + z * x
+    h = (z * z).tanh()
     y = h + q + q * x
     y.backward()
     xpt, ypt = x, y
@@ -25,6 +25,7 @@ def test_sanity_check():
     # forward pass went well
     assert ymg.data == ypt.data.item()
     # backward pass went well
+    assert xpt.grad is not None
     assert xmg.grad == xpt.grad.item()
 
 
@@ -36,8 +37,8 @@ def test_more_ops():
     d = a * b + b**3
     c += c + 1
     c += 1 + c + (-a)
-    d += d * 2 + (b + a).relu()
-    d += 3 * d + (b - a).relu()
+    d += d * 2 + (b + a).tanh()
+    d += 3 * d + (b - a).tanh()
     e = c - d
     f = e**2
     g = f / 2.0
@@ -53,8 +54,8 @@ def test_more_ops():
     d = a * b + b**3
     c = c + c + 1
     c = c + 1 + c + (-a)
-    d = d + d * 2 + (b + a).relu()
-    d = d + 3 * d + (b - a).relu()
+    d = d + d * 2 + (b + a).tanh()
+    d = d + 3 * d + (b - a).tanh()
     e = c - d
     f = e**2
     g = f / 2.0
@@ -66,5 +67,6 @@ def test_more_ops():
     # forward pass went well
     assert abs(gmg.data - gpt.data.item()) < tol
     # backward pass went well
+    assert apt.grad is not None and bpt.grad is not None
     assert abs(amg.grad - apt.grad.item()) < tol
     assert abs(bmg.grad - bpt.grad.item()) < tol

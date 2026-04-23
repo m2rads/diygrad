@@ -45,9 +45,6 @@ class Value:
         out._backward = _backward
         return out
 
-    def __truediv__(self, other):
-        return other * other**-1
-
     def exp(self):
         x = self.data
         out = Value(math.exp(x), (self,), "exp")
@@ -96,6 +93,12 @@ class Value:
 
     def __rsub__(self, other):
         return self + (-other)
+
+    def __truediv__(self, other):
+        return self * other**-1
+
+    def __rtruediv__(self, other):
+        return Value(other) * self**-1
 
     def __rmul__(self, other):
         return self * other
