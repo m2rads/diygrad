@@ -25,6 +25,9 @@ class Neuron(Module):
     def parameters(self):
         return self.w + [self.b]
 
+    def __repr__(self):
+        return f"{'Tanh'}Neuron({len(self.w)})"
+
 
 class Layer(Module):
     def __init__(self, nin, nout):
@@ -36,6 +39,9 @@ class Layer(Module):
 
     def parameters(self):
         return [p for neuron in self.neurons for p in neuron.parameters()]
+
+    def __repr__(self):
+        return f"Layer of [{', '.join(str(n) for n in self.neurons)}]"
 
 
 class MLP(Module):
@@ -50,3 +56,6 @@ class MLP(Module):
 
     def parameters(self):
         return [p for layer in self.layers for p in layer.parameters()]
+
+    def __repr__(self):
+        return f"MLP of [{', '.join(str(layer) for layer in self.layers)}]"
